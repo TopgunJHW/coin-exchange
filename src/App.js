@@ -1,8 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Coin from './components/Coin/Coin';
+import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
 import AccountBalance from './components/AccountBalance/AccountBalance';
+import CoinList from './components/CoinList/CoinList';
+import styled from 'styled-components';
+
+const Div = styled.div`
+  text-align: center;
+  background-color: #1f3ea3;
+  color: #cccccc;
+`;
 
 class App extends React.Component {
 
@@ -42,32 +48,11 @@ class App extends React.Component {
   
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} alt="React logo" className="App-logo"/>
-          <h1 className="App-title">
-            Coin Exchange
-          </h1>
-        </header>
+      <Div>
+        <ExchangeHeader />
         <AccountBalance amount={this.state.balance} />
-        <table className="Coin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Ticker</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              // key values is needed for optimally rendering in react. 
-              this.state.coinData.map( ({name, ticker, price}) =>
-                <Coin key={ticker} name={name} ticker={ticker} price={price} />
-              )
-            }
-          </tbody>
-        </table>
-      </div>
+        <CoinList coinData={this.state.coinData} />
+      </Div>
     );
   }
   
