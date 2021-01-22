@@ -8,12 +8,8 @@ const Td = styled.td`
 `;
 
 export default class Coin extends Component {
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-    };
-    
-    handleClick(event) {
+   
+    handleClick = (event) => {
         // Prevent the default action of submitting the form
         event.preventDefault();
         this.props.handleRefresh(this.props.ticker);
