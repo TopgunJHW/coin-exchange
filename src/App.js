@@ -12,6 +12,10 @@ const Div = styled.div`
 `;
 
 const COIN_COUNT = 10;
+const coinsUrl = 'https://api.coinpaprika.com/v1/coins';
+const tickersUrl = 'https://api.coinpaprika.com/v1/tickers/';
+
+const formatPrice = price => parseFloat(Number(price).toFixed(4));
 
 class App extends React.Component {
   state = {
@@ -53,13 +57,11 @@ class App extends React.Component {
 
   componentDidMount = async() => {
     // Retrieve ticker from coinpaprika
-    const response = await axios.get('https://api.coinpaprika.com/v1/coins')
+    const response = await axios.get(coinsUrl)
     let coinIDs = response.data.slice(0, COIN_COUNT).map(coin => coin.id);
 
     // Retrieve prices from coinpaprika
-    const tickerUrl = 'https://api.coinpaprika.com/v1/tickers/';
-    const promises = coinIDs.map(id => axios.get(tickerUrl + id));
-
+    const promises = coinIDs.map(id => axios.get(tickersUrl + id));
     const responses = await Promise.all(promises);
     const coinData = responses.map(function(response){
       const coin = response.data;
@@ -68,7 +70,7 @@ class App extends React.Component {
         name: coin.name,
         ticker: coin.symbol,
         balance: 0,
-        price: parseFloat(Number(coin.quotes.USD.price).toFixed(4))
+        price: formatPrice(coin.quotes.USD.price),
       };
     });
 
@@ -85,14 +87,17 @@ class App extends React.Component {
     });
   }
 
-  handleRefresh = (refreshTicker) => {
-    const newCoinData = this.state.coinData.map(function( values ) {
-      let newValues = {...values}; // This is shallow copy of the values
-      if(values.ticker === refreshTicker){
-        const randomPercentage = 0.995 + Math.random() * 0.01;
-        newValues.price *= randomPercentage;
-      }
-      return newValues;
+  handleRefresh = async(tickerID) => {
+    const tickerUrl = tickersUrl + tickerID;
+    const response = await axios.get(tickerUrl);
+    const newPrice = formatPrice(response.data.quotes.USD.price);
+
+    const newCoinData = this.state.coinData.map( coin => {
+      let newCoin = {...coin}; // This is shallow copy of the values
+      if(coin.key === tickerID){
+        newCoin.price = newPrice;
+      };
+      return newCoin;
     });
     this.setState({coinData: newCoinData})
   }
