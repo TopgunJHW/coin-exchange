@@ -4,7 +4,8 @@ import logo from './logo.svg';
 
 const Header = styled.header`
   background-color: #282c34;
-  min-height: 20vh;
+  min-height: 10vh;
+  width: 100%;
   display: flex;
   flex-direction: row; /* Column -> items stacked atop of each other*/
   align-items: center;
@@ -20,7 +21,10 @@ const Img = styled.img`
 `;
 
 const H1 = styled.h1`
-  font-size: 4rem;
+  font-size: 3rem;
+  line-height: 8rem;
+  fold-weight: bold;
+  min-width: 300px;
 `;
 
 export default class ExchangeHeader extends Component {

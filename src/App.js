@@ -5,6 +5,10 @@ import CoinList from './components/CoinList/CoinList';
 import styled from 'styled-components';
 import axios from 'axios';
 
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootswatch/dist/flatly/bootstrap.min.css';
+import '@fortawesome/fontawesome-free/js/all';
+
 const Div = styled.div`
   text-align: center;
   background-color: #1f3ea3;
@@ -14,13 +18,12 @@ const Div = styled.div`
 const COIN_COUNT = 10;
 const coinsUrl = 'https://api.coinpaprika.com/v1/coins';
 const tickersUrl = 'https://api.coinpaprika.com/v1/tickers/';
-
-const formatPrice = price => parseFloat(Number(price).toFixed(4));
+const coinPaprikaRateLimit = 10; //Single IP address can send less than 10 requests per second
 
 function App() {
   // This is use-state hooks
   const [balance, setBalance] = useState(10000);
-  const [showBalance, setShowBalance] = useState(true);
+  const [showBalance, setShowBalance] = useState(false);
   const [coinData, setCoinData] = useState([]);
 
   const componentDidMount = async() => {
@@ -38,7 +41,7 @@ function App() {
         name: coin.name,
         ticker: coin.symbol,
         balance: 0,
-        price: formatPrice(coin.quotes.USD.price),
+        price: coin.quotes.USD.price,
       };
     });
     setCoinData(coinData);
@@ -56,12 +59,28 @@ function App() {
   const handleBalanceVisibility = () => {
     setShowBalance(oldValue => !oldValue)
   }
+  
+  const handleHelicopterMoney = () => {
+    setBalance(balance + 1000)
+  }
+
+  const handleTransaction = (isBuy, tickerID) => {
+    var balanceChange = isBuy ? 1 : -1;
+    const newCoinData = coinData.map(function (coin) {
+      let newCoin = {...coin};
+      if(tickerID === coin.key){
+        newCoin.balance += balanceChange;
+        setBalance(oldBalance => oldBalance - balanceChange * coin.price);
+      }
+      return newCoin
+    });
+    setCoinData(newCoinData);
+  }
 
   const handleRefresh = async(tickerID) => {
     const tickerUrl = tickersUrl + tickerID;
     const response = await axios.get(tickerUrl);
-    const newPrice = formatPrice(response.data.quotes.USD.price);
-    debugger
+    const newPrice = response.data.quotes.USD.price;
     const newCoinData = coinData.map( coin => {
       let newCoin = {...coin}; // This is shallow copy of the values
       if(coin.key === tickerID){
@@ -78,10 +97,12 @@ function App() {
       <AccountBalance 
         amount={balance} 
         showBalance={showBalance} 
-        handleBalanceVisibility={handleBalanceVisibility}/>
+        handleBalanceVisibility={handleBalanceVisibility}
+        handleHelicopterMoney={handleHelicopterMoney}/>
       <CoinList 
         coinData={coinData} 
-        handleRefresh={handleRefresh} 
+        handleRefresh={handleRefresh}
+        handleTransaction={handleTransaction}
         showBalance={showBalance}/>
     </Div>
   );
