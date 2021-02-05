@@ -14,9 +14,11 @@ export default function CoinList(props) {
     <Table className='table table-primary table-bordered'>
       <thead>
         <tr>
+          <th>#</th>
           <th>Name</th>
           <th>Ticker</th>
           <th>Price</th>
+          <th>Market Cap</th>
           <th>Balance</th>
           <th>Actions</th>
         </tr>
@@ -24,7 +26,7 @@ export default function CoinList(props) {
       <tbody>
           {
             // key values is needed for optimally rendering in react. 
-            props.coinData.map( ({key, name, ticker, price, balance}) =>
+            props.coinData.map( ({key, name, ticker, price, marketCap, balance}, index) =>
               <Coin key={key}
                     handleRefresh={props.handleRefresh}
                     handleTransaction={props.handleTransaction}
@@ -32,8 +34,10 @@ export default function CoinList(props) {
                     ticker={ticker}
                     balance={balance}
                     price={price}
+                    marketCap={marketCap}
                     showBalance={props.showBalance}
-                    tickerID={key} />
+                    tickerID={key}
+                    rank={index} />
             )
           }
       </tbody>

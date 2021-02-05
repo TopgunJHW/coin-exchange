@@ -4,6 +4,7 @@ import AccountBalance from './components/AccountBalance/AccountBalance';
 import CoinList from './components/CoinList/CoinList';
 import styled from 'styled-components';
 import axios from 'axios';
+import {SortArrayOfObjects} from './components/functions'
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootswatch/dist/flatly/bootstrap.min.css';
@@ -15,10 +16,8 @@ const Div = styled.div`
   color: #cccccc;
 `;
 
-const COIN_COUNT = 10;
-const coinsUrl = 'https://api.coinpaprika.com/v1/coins';
+const COIN_COUNT = 100;
 const tickersUrl = 'https://api.coinpaprika.com/v1/tickers/';
-const coinPaprikaRateLimit = 10; //Single IP address can send less than 10 requests per second
 
 function App() {
   // This is use-state hooks
@@ -27,21 +26,36 @@ function App() {
   const [coinData, setCoinData] = useState([]);
 
   const componentDidMount = async() => {
-    // Retrieve ticker from coinpaprika
-    const response = await axios.get(coinsUrl)
-    let coinIDs = response.data.slice(0, COIN_COUNT).map(coin => coin.id);
+    // // Retrieve ticker from coinpaprika
+    // const response = await axios.get(coinsUrl)
+    // let coinIDs = response.data.slice(0, COIN_COUNT).map(coin => coin.id);
 
-    // Retrieve prices from coinpaprika
-    const promises = coinIDs.map(id => axios.get(tickersUrl + id));
-    const responses = await Promise.all(promises);
-    const coinData = responses.map(function(response){
-      const coin = response.data;
+    // // Retrieve prices from coinpaprika
+    // const promises = coinIDs.map(id => axios.get(tickersUrl + id));
+    // const responses = await Promise.all(promises);
+    // const coinData = responses.map(function(response){
+    //   const coin = response.data;
+    //   return {
+    //     key: coin.id,
+    //     name: coin.name,
+    //     ticker: coin.symbol,
+    //     balance: 0,
+    //     price: coin.quotes.USD.price,
+    //   };
+    // });
+    // setCoinData(coinData);
+
+    const response = await axios.get(tickersUrl);
+    const sortedResponse = SortArrayOfObjects(response.data);
+    const slicedResponse = sortedResponse.slice(0, COIN_COUNT);
+    const coinData = slicedResponse.map(function(coin){
       return {
         key: coin.id,
         name: coin.name,
         ticker: coin.symbol,
         balance: 0,
         price: coin.quotes.USD.price,
+        marketCap: coin.quotes.USD.market_cap
       };
     });
     setCoinData(coinData);

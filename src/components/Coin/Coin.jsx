@@ -1,8 +1,12 @@
 import React from 'react';
 import propTypes from 'prop-types';
 import styled from 'styled-components';
-import { formatter } from "../functions";
+import { formatter, formatterMarketCap, formatterCoin } from "../functions";
 
+const TdRank = styled.td`
+    border: 1px solid #cccccc;
+    width: 5vw;
+`;
 const Td = styled.td`
     border: 1px solid #cccccc;
     width: 14vw;
@@ -14,6 +18,12 @@ const TdName = styled(Td)`
 
 const TdTicker = styled(Td)`
     width: 10vw;
+`;
+
+const TdCurrency = styled.td`
+    border: 1px solid #cccccc;
+    width: 14vw;
+    text-align: right;
 `;
 
 const TdControls = styled(Td)`
@@ -48,10 +58,12 @@ export default function Coin(props) {
 
     return (
         <tr>
+            <TdRank>{props.rank + 1}</TdRank>
             <TdName>{props.name}</TdName>
             <TdTicker>{props.ticker}</TdTicker>
-            <Td>{formatter.format(props.price)}</Td>
-            <Td>{props.showBalance ? formatter.format(props.balance) : '-'}</Td>
+            <TdCurrency>{formatter.format(props.price)}</TdCurrency>
+            <TdCurrency>{formatterMarketCap.format(props.marketCap)}</TdCurrency>
+            <TdCurrency>{props.showBalance ? formatterCoin.format(props.balance) : '-'}</TdCurrency>
             <TdControls>
                 <form action="#" method="POST">
                     <Button className="btn btn-info" onClick={handleRefresh}>
