@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import logo from './logo.svg';
 
 const Header = styled.header`
-  background-color: #282c34;
+  background-color: #FFFFFF;
   min-height: 10vh;
   width: 100%;
   display: flex;
@@ -12,7 +12,7 @@ const Header = styled.header`
   justify-content: flex-start;
   font-size: 36px;
   /* font-size: calc(10px + 2vmin); */
-  color: white;
+  color: black;
 `;
 
 const Img = styled.img`

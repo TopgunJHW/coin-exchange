@@ -3,17 +3,13 @@ import propTypes from 'prop-types';
 import styled from 'styled-components';
 import { formatter, formatterMarketCap, formatterCoin } from "../functions";
 
-const TdRank = styled.td`
+const Td = styled.td`
     border: 1px solid #cccccc;
     width: 5vw;
 `;
-const Td = styled.td`
-    border: 1px solid #cccccc;
-    width: 14vw;
-`;
 
 const TdName = styled(Td)`
-    width: 20vw;
+    width: 15vw;
 `;
 
 const TdTicker = styled(Td)`
@@ -22,12 +18,12 @@ const TdTicker = styled(Td)`
 
 const TdCurrency = styled.td`
     border: 1px solid #cccccc;
-    width: 14vw;
+    width: 10vw;
     text-align: right;
 `;
 
 const TdControls = styled(Td)`
-    width: 25vw;
+    width: 20vw;
 `;
 
 const Button = styled.button`
@@ -41,7 +37,7 @@ export default function Coin(props) {
     const handleRefresh = (event) => {
         // Prevent the default action of submitting the form
         event.preventDefault();
-        props.handleRefresh(props.tickerID);
+        // props.handleRefresh(props.tickerID);
     };
 
     const handleBuy = (event) => {
@@ -58,16 +54,18 @@ export default function Coin(props) {
 
     return (
         <tr>
-            <TdRank>{props.rank + 1}</TdRank>
+            <Td>{props.rank + 1}</Td>
             <TdName>{props.name}</TdName>
             <TdTicker>{props.ticker}</TdTicker>
-            <TdCurrency>{formatter.format(props.price)}</TdCurrency>
             <TdCurrency>{formatterMarketCap.format(props.marketCap)}</TdCurrency>
-            <TdCurrency>{props.showBalance ? formatterCoin.format(props.balance) : '-'}</TdCurrency>
+            <TdCurrency>{formatter.format(props.price)}</TdCurrency>
+            <TdCurrency>{props.showBalance ? 
+                        formatterCoin.format(props.balance).toString() : 
+                        '-'}</TdCurrency>
             <TdControls>
                 <form action="#" method="POST">
                     <Button className="btn btn-info" onClick={handleRefresh}>
-                        Refresh
+                        Graph
                     </Button>
                     <Button className="btn btn-success" onClick={handleBuy}>
                         Buy

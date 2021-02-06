@@ -12,11 +12,11 @@ import '@fortawesome/fontawesome-free/js/all';
 
 const Div = styled.div`
   text-align: center;
-  background-color: #1f3ea3;
-  color: #cccccc;
+  background-color: #efefef;
+  color: black;
 `;
 
-const COIN_COUNT = 100;
+const COIN_COUNT = 10;
 const tickersUrl = 'https://api.coinpaprika.com/v1/tickers/';
 
 function App() {
@@ -25,30 +25,15 @@ function App() {
   const [showBalance, setShowBalance] = useState(false);
   const [coinData, setCoinData] = useState([]);
 
-  const componentDidMount = async() => {
-    // // Retrieve ticker from coinpaprika
-    // const response = await axios.get(coinsUrl)
-    // let coinIDs = response.data.slice(0, COIN_COUNT).map(coin => coin.id);
-
-    // // Retrieve prices from coinpaprika
-    // const promises = coinIDs.map(id => axios.get(tickersUrl + id));
-    // const responses = await Promise.all(promises);
-    // const coinData = responses.map(function(response){
-    //   const coin = response.data;
-    //   return {
-    //     key: coin.id,
-    //     name: coin.name,
-    //     ticker: coin.symbol,
-    //     balance: 0,
-    //     price: coin.quotes.USD.price,
-    //   };
-    // });
-    // setCoinData(coinData);
-
+  const fetchTickerInfo = async() => {
     const response = await axios.get(tickersUrl);
     const sortedResponse = SortArrayOfObjects(response.data);
-    const slicedResponse = sortedResponse.slice(0, COIN_COUNT);
-    const coinData = slicedResponse.map(function(coin){
+    return sortedResponse.slice(0, COIN_COUNT);
+  }
+
+  const componentDidMount = async() => {
+    const slicedResponse = await fetchTickerInfo();
+    const newCoinData = slicedResponse.map(function(coin){
       return {
         key: coin.id,
         name: coin.name,
@@ -58,7 +43,7 @@ function App() {
         marketCap: coin.quotes.USD.market_cap
       };
     });
-    setCoinData(coinData);
+    setCoinData(newCoinData);
   }; 
 
   useEffect(function () {
@@ -92,14 +77,12 @@ function App() {
   }
 
   const handleRefresh = async(tickerID) => {
-    const tickerUrl = tickersUrl + tickerID;
-    const response = await axios.get(tickerUrl);
-    const newPrice = response.data.quotes.USD.price;
-    const newCoinData = coinData.map( coin => {
+    const slicedResponse = await fetchTickerInfo();
+    const newCoinData = slicedResponse.map(function(responseCoin){
+      const coin = coinData.find(coin => coin.key === responseCoin.id);
       let newCoin = {...coin}; // This is shallow copy of the values
-      if(coin.key === tickerID){
-        newCoin.price = newPrice;
-      };
+      newCoin.price = responseCoin.quotes.USD.price;
+      newCoin.marketCap = responseCoin.quotes.USD.market_cap;
       return newCoin;
     });
     setCoinData(newCoinData);
@@ -112,10 +95,10 @@ function App() {
         amount={balance} 
         showBalance={showBalance} 
         handleBalanceVisibility={handleBalanceVisibility}
-        handleHelicopterMoney={handleHelicopterMoney}/>
+        handleHelicopterMoney={handleHelicopterMoney}
+        handleRefresh={handleRefresh}/>
       <CoinList 
         coinData={coinData} 
-        handleRefresh={handleRefresh}
         handleTransaction={handleTransaction}
         showBalance={showBalance}/>
     </Div>

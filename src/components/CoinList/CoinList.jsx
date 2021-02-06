@@ -7,6 +7,9 @@ const Table = styled.table`
   display: inline-block;
   width: 80%;
   font-size: 1rem;
+  background-color: white;
+  color: black;
+  box-shadow: 0 0 5px grey;
 `;
 
 export default function CoinList(props) {
@@ -17,8 +20,9 @@ export default function CoinList(props) {
           <th>#</th>
           <th>Name</th>
           <th>Ticker</th>
-          <th>Price</th>
           <th>Market Cap</th>
+          <th>Price
+          </th>
           <th>Balance</th>
           <th>Actions</th>
         </tr>
@@ -28,7 +32,6 @@ export default function CoinList(props) {
             // key values is needed for optimally rendering in react. 
             props.coinData.map( ({key, name, ticker, price, marketCap, balance}, index) =>
               <Coin key={key}
-                    handleRefresh={props.handleRefresh}
                     handleTransaction={props.handleTransaction}
                     name={name}
                     ticker={ticker}
