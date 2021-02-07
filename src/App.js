@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchTickerInfo, findObject } from './components/functions'
 import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
+import NavBar from './components/NavBar/NavBar';
 import AccountBalance from './components/AccountBalance/AccountBalance';
 import CoinList from './components/CoinList/CoinList';
 import styled from 'styled-components';
-import {fetchTickerInfo} from './components/functions'
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootswatch/dist/flatly/bootstrap.min.css';
@@ -24,71 +25,34 @@ function App() {
   const [showBalance, setShowBalance] = useState(false);
   const [coinData, setCoinData] = useState([]);
   const [coinCount, setCoinCount] = useState(10)
+  const [coinHoldings, setCoinHoldings] = useState([])
 
-  const componentDidMount = async() => {
-    const slicedResponse = await fetchTickerInfo(coinCount, tickersUrl);
-    const newCoinData = slicedResponse.map(function(coin){
-      return {
-        key: coin.id,
-        name: coin.name,
-        ticker: coin.symbol,
-        balance: 0,
-        price: coin.quotes.USD.price,
-        marketCap: coin.quotes.USD.market_cap
-      };
-    });
-    setCoinData(newCoinData);
-  };
-
-  const handleRefresh = async() => {
-    const slicedResponse = await fetchTickerInfo(coinCount, tickersUrl);
-    const newCoinData = slicedResponse.map(function(responseCoin){
-      const coin = coinData.find(coin => coin.key === responseCoin.id);
+  async function fetchCreateCoinData (count) {
+    const fetchedCoinData = await fetchTickerInfo(count, tickersUrl);
+    const newCoinData = fetchedCoinData.map(function(fetchedCoin){
+      const coin = findObject(coinData, 'key', fetchedCoin.id);
       
       if (coin === undefined) {
         return {
-          key: responseCoin.id,
-          name: responseCoin.name,
-          ticker: responseCoin.symbol,
-          balance: 0,
-          price: responseCoin.quotes.USD.price,
-          marketCap: responseCoin.quotes.USD.market_cap
+          key: fetchedCoin.id,
+          name: fetchedCoin.name,
+          ticker: fetchedCoin.symbol,
+          price: fetchedCoin.quotes.USD.price,
+          marketCap: fetchedCoin.quotes.USD.market_cap
         }
       }
       else{
         let newCoin = {...coin}; // This is shallow copy of the values
-        newCoin.price = responseCoin.quotes.USD.price;
-        newCoin.marketCap = responseCoin.quotes.USD.market_cap;
+        newCoin.price = fetchedCoin.quotes.USD.price;
+        newCoin.marketCap = fetchedCoin.quotes.USD.market_cap;
         return newCoin;
       };
     });
-    setCoinData(newCoinData);
+    return newCoinData
   }
 
-  const handleCoinCount = async(value) => {
-    const slicedResponse = await fetchTickerInfo(value, tickersUrl);
-    const newCoinData = slicedResponse.map(function(responseCoin){
-      const coin = coinData.find(coin => coin.key === responseCoin.id);
-      
-      if (coin === undefined) {
-        return {
-          key: responseCoin.id,
-          name: responseCoin.name,
-          ticker: responseCoin.symbol,
-          balance: 0,
-          price: responseCoin.quotes.USD.price,
-          marketCap: responseCoin.quotes.USD.market_cap
-        }
-      }
-      else{
-        let newCoin = {...coin}; // This is shallow copy of the values
-        newCoin.price = responseCoin.quotes.USD.price;
-        newCoin.marketCap = responseCoin.quotes.USD.market_cap;
-        return newCoin;
-      };
-    });
-    setCoinData(newCoinData);
-    setCoinCount(value);
+  const componentDidMount = async() => {
+    setCoinData(await fetchCreateCoinData(coinCount));
   };
 
   useEffect(function () {
@@ -100,6 +64,15 @@ function App() {
     }
   })
 
+  const handleRefresh = async() => {
+    setCoinData(await fetchCreateCoinData(coinCount));
+  }
+
+  const handleCoinCount = async(value) => {
+    setCoinData(await fetchCreateCoinData(value));
+    setCoinCount(value);
+  };
+
   const handleBalanceVisibility = () => {
     setShowBalance(oldValue => !oldValue)
   }
@@ -108,22 +81,30 @@ function App() {
     setBalance(balance + helicopterAmount)
   }
 
-  const handleTransaction = (isBuy, tickerID) => {
+  const handleTransaction = (isBuy, tickerKey) => {
+    const coinInfo = findObject(coinData, 'key', tickerKey);
     var balanceChange = isBuy ? 1 : -1;
-    const newCoinData = coinData.map(function (coin) {
-      let newCoin = {...coin};
-      if(tickerID === coin.key){
-        newCoin.balance += balanceChange;
-        setBalance(oldBalance => oldBalance - balanceChange * coin.price);
+    let holdings = [...coinHoldings];
+
+    if (!findObject(coinHoldings, 'key', tickerKey)){
+      holdings = [...coinHoldings, {key: tickerKey, balance: 0}]
+    };
+
+    let newHoldings = holdings.map(function(holding){
+      let newHolding = {...holding};
+      if(tickerKey === holding.key){
+        newHolding.balance += balanceChange;
+        setBalance(oldBalance => oldBalance - balanceChange * coinInfo.price);
       }
-      return newCoin
+      return newHolding;
     });
-    setCoinData(newCoinData);
+    setCoinHoldings(newHoldings);
   }
 
   return (
     <Div>
       <ExchangeHeader />
+      <NavBar />
       <AccountBalance 
         amount={balance} 
         showBalance={showBalance} 
@@ -131,7 +112,8 @@ function App() {
         handleHelicopterMoney={handleHelicopterMoney}
         handleRefresh={handleRefresh}/>
       <CoinList 
-        coinData={coinData} 
+        coinData={coinData}
+        coinHoldings={coinHoldings}
         handleTransaction={handleTransaction}
         handleCoinCount={handleCoinCount}
         showBalance={showBalance}/>

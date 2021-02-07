@@ -1,7 +1,8 @@
 import React from 'react'
 import Coin from '../Coin/Coin';
 import styled from 'styled-components';
-import {Button} from '../styledButtons';
+import { Button } from '../styledButtons';
+import { findObject } from '../functions';
 
 const Table = styled.table`
   display: inline-block;
@@ -52,18 +53,20 @@ export default function CoinList(props) {
       <tbody>
           {
             // key values is needed for optimally rendering in react. 
-            props.coinData.map( ({key, name, ticker, price, marketCap, balance}, index) =>
-              <Coin key={key}
-                    handleTransaction={props.handleTransaction}
-                    name={name}
-                    ticker={ticker}
-                    balance={balance}
-                    price={price}
-                    marketCap={marketCap}
-                    showBalance={props.showBalance}
-                    tickerID={key}
-                    rank={index} />
-            )
+            props.coinData.map( function({key, name, ticker, price, marketCap}, index) {
+              const holding = findObject(props.coinHoldings, 'key', key);
+              return <Coin 
+                        key={key}
+                        handleTransaction={props.handleTransaction}
+                        name={name}
+                        ticker={ticker}
+                        balance={holding ? holding.balance : 0}
+                        price={price}
+                        marketCap={marketCap}
+                        showBalance={props.showBalance}
+                        tickerID={key}
+                        rank={index} />
+            })
           }
       </tbody>
     </Table>

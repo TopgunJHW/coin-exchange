@@ -33,6 +33,14 @@ export function SortArrayOfObjects(array) {
     return array.sort(compare);
 }
 
+export function findObject (array, key, findValue) {
+    return array.find(object => object[key] === findValue)
+}
+
+export function findObjectIndex (array, key, findValue) {
+    return array.findIndex(object => object[key] === findValue)
+}
+
 export async function fetchTickerInfo (count, tickersUrl){
     const response = await axios.get(tickersUrl);
     const sortedResponse = SortArrayOfObjects(response.data);
