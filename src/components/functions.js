@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export var formatter = Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -29,4 +31,10 @@ export function SortArrayOfObjects(array) {
         return 0;
     };
     return array.sort(compare);
-} 
+}
+
+export async function fetchTickerInfo (count, tickersUrl){
+    const response = await axios.get(tickersUrl);
+    const sortedResponse = SortArrayOfObjects(response.data);
+    return sortedResponse.slice(0, count);
+}

@@ -1,9 +1,9 @@
 import React from 'react'
 import Coin from '../Coin/Coin';
 import styled from 'styled-components';
+import {Button} from '../styledButtons';
 
 const Table = styled.table`
-  margin-bottom: 50px;
   display: inline-block;
   width: 80%;
   font-size: 1rem;
@@ -12,10 +12,32 @@ const Table = styled.table`
   box-shadow: 0 0 5px grey;
 `;
 
+const Thead = styled.thead`
+  background-color: rgba(97, 218, 251, .2)
+`;
+
+const Section = styled.section`
+  display: inline-block;
+  width: 80%;
+  margin-bottom: 50px;
+`;
+
+const Select = styled.select`
+  display: inline-block;
+  width: 5rem;
+`;
+
 export default function CoinList(props) {
+
+  const handleCoinCount = (event) => {
+    // Prevent the default action of submitting the form
+    event.preventDefault();
+    props.handleCoinCount(event.target.value);
+};
   return (
-    <Table className='table table-primary table-bordered'>
-      <thead>
+    <>
+    <Table className='table table-hover'>
+      <Thead>
         <tr>
           <th>#</th>
           <th>Name</th>
@@ -26,7 +48,7 @@ export default function CoinList(props) {
           <th>Balance</th>
           <th>Actions</th>
         </tr>
-      </thead>
+      </Thead>
       <tbody>
           {
             // key values is needed for optimally rendering in react. 
@@ -45,5 +67,15 @@ export default function CoinList(props) {
           }
       </tbody>
     </Table>
+    <Section>
+      <Button className="btn btn-outline-info">&#10094;Previous</Button>
+      <Select className="form-control" onChange={handleCoinCount}>
+        <option value="10">10</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </Select>
+      <Button className="btn btn-outline-info">Next&#10095;</Button>
+    </Section>
+    </>
   );
 };

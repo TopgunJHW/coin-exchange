@@ -2,6 +2,7 @@ import React from 'react';
 import propTypes from 'prop-types';
 import styled from 'styled-components';
 import { formatter, formatterMarketCap, formatterCoin } from "../functions";
+import {ButtonTable} from '../styledButtons';
 
 const Td = styled.td`
     border: 1px solid #cccccc;
@@ -24,12 +25,6 @@ const TdCurrency = styled.td`
 
 const TdControls = styled(Td)`
     width: 20vw;
-`;
-
-const Button = styled.button`
-    font-size: 11px;
-    width: 64px;
-    margin 3px 5px 0;
 `;
 
 export default function Coin(props) {
@@ -64,15 +59,15 @@ export default function Coin(props) {
                         '-'}</TdCurrency>
             <TdControls>
                 <form action="#" method="POST">
-                    <Button className="btn btn-info" onClick={handleRefresh}>
-                        Graph
-                    </Button>
-                    <Button className="btn btn-success" onClick={handleBuy}>
+                    <ButtonTable className="btn btn-info" onClick={handleRefresh}>
+                        <i className="fas fa-chart-line"></i> Graph
+                    </ButtonTable>
+                    <ButtonTable className="btn btn-success" onClick={handleBuy}>
                         Buy
-                    </Button>
-                    <Button className="btn btn-danger" onClick={handleSell}>
+                    </ButtonTable>
+                    <ButtonTable className="btn btn-danger" onClick={handleSell}>
                         Sell
-                    </Button>
+                    </ButtonTable>
                 </form>
             </TdControls>
         </tr>

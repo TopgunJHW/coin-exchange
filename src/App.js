@@ -3,8 +3,7 @@ import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
 import AccountBalance from './components/AccountBalance/AccountBalance';
 import CoinList from './components/CoinList/CoinList';
 import styled from 'styled-components';
-import axios from 'axios';
-import {SortArrayOfObjects} from './components/functions'
+import {fetchTickerInfo} from './components/functions'
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootswatch/dist/flatly/bootstrap.min.css';
@@ -16,7 +15,7 @@ const Div = styled.div`
   color: black;
 `;
 
-const COIN_COUNT = 10;
+const helicopterAmount = 10000;
 const tickersUrl = 'https://api.coinpaprika.com/v1/tickers/';
 
 function App() {
@@ -24,15 +23,10 @@ function App() {
   const [balance, setBalance] = useState(10000);
   const [showBalance, setShowBalance] = useState(false);
   const [coinData, setCoinData] = useState([]);
-
-  const fetchTickerInfo = async() => {
-    const response = await axios.get(tickersUrl);
-    const sortedResponse = SortArrayOfObjects(response.data);
-    return sortedResponse.slice(0, COIN_COUNT);
-  }
+  const [coinCount, setCoinCount] = useState(10)
 
   const componentDidMount = async() => {
-    const slicedResponse = await fetchTickerInfo();
+    const slicedResponse = await fetchTickerInfo(coinCount, tickersUrl);
     const newCoinData = slicedResponse.map(function(coin){
       return {
         key: coin.id,
@@ -44,7 +38,58 @@ function App() {
       };
     });
     setCoinData(newCoinData);
-  }; 
+  };
+
+  const handleRefresh = async() => {
+    const slicedResponse = await fetchTickerInfo(coinCount, tickersUrl);
+    const newCoinData = slicedResponse.map(function(responseCoin){
+      const coin = coinData.find(coin => coin.key === responseCoin.id);
+      
+      if (coin === undefined) {
+        return {
+          key: responseCoin.id,
+          name: responseCoin.name,
+          ticker: responseCoin.symbol,
+          balance: 0,
+          price: responseCoin.quotes.USD.price,
+          marketCap: responseCoin.quotes.USD.market_cap
+        }
+      }
+      else{
+        let newCoin = {...coin}; // This is shallow copy of the values
+        newCoin.price = responseCoin.quotes.USD.price;
+        newCoin.marketCap = responseCoin.quotes.USD.market_cap;
+        return newCoin;
+      };
+    });
+    setCoinData(newCoinData);
+  }
+
+  const handleCoinCount = async(value) => {
+    const slicedResponse = await fetchTickerInfo(value, tickersUrl);
+    const newCoinData = slicedResponse.map(function(responseCoin){
+      const coin = coinData.find(coin => coin.key === responseCoin.id);
+      
+      if (coin === undefined) {
+        return {
+          key: responseCoin.id,
+          name: responseCoin.name,
+          ticker: responseCoin.symbol,
+          balance: 0,
+          price: responseCoin.quotes.USD.price,
+          marketCap: responseCoin.quotes.USD.market_cap
+        }
+      }
+      else{
+        let newCoin = {...coin}; // This is shallow copy of the values
+        newCoin.price = responseCoin.quotes.USD.price;
+        newCoin.marketCap = responseCoin.quotes.USD.market_cap;
+        return newCoin;
+      };
+    });
+    setCoinData(newCoinData);
+    setCoinCount(value);
+  };
 
   useEffect(function () {
     if (coinData.length === 0) {
@@ -60,7 +105,7 @@ function App() {
   }
   
   const handleHelicopterMoney = () => {
-    setBalance(balance + 1000)
+    setBalance(balance + helicopterAmount)
   }
 
   const handleTransaction = (isBuy, tickerID) => {
@@ -72,18 +117,6 @@ function App() {
         setBalance(oldBalance => oldBalance - balanceChange * coin.price);
       }
       return newCoin
-    });
-    setCoinData(newCoinData);
-  }
-
-  const handleRefresh = async(tickerID) => {
-    const slicedResponse = await fetchTickerInfo();
-    const newCoinData = slicedResponse.map(function(responseCoin){
-      const coin = coinData.find(coin => coin.key === responseCoin.id);
-      let newCoin = {...coin}; // This is shallow copy of the values
-      newCoin.price = responseCoin.quotes.USD.price;
-      newCoin.marketCap = responseCoin.quotes.USD.market_cap;
-      return newCoin;
     });
     setCoinData(newCoinData);
   }
@@ -100,6 +133,7 @@ function App() {
       <CoinList 
         coinData={coinData} 
         handleTransaction={handleTransaction}
+        handleCoinCount={handleCoinCount}
         showBalance={showBalance}/>
     </Div>
   );

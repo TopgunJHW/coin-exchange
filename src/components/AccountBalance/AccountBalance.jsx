@@ -1,7 +1,8 @@
 import React from 'react';
 import propTypes from 'prop-types';
 import styled from 'styled-components';
-import { formatter } from "../functions";
+import {formatter} from "../functions";
+import {Button} from '../styledButtons';
 
 export const Section = styled.section`
     margin: 0.5rem 0 2rem 2.5rem;    
@@ -16,14 +17,6 @@ const Balance = styled.div`
     font-size: 1.5rem;
     vertical-align: middle;
     text-align: left;
-`;
-
-const Button = styled.button`
-    margin: 0 2px;
-`;
-
-const BalanceToggleButton = styled(Button)`
-    width: 150px;
 `;
 
 export default function AccountBalance(props) {
@@ -45,19 +38,18 @@ export default function AccountBalance(props) {
                     onClick={props.handleHelicopterMoney}>
                     <i className="fas fa-helicopter"></i>
                 </Button>
-                <BalanceToggleButton 
+                <Button 
                     className={buttonClass}
                     onClick={props.handleBalanceVisibility}>
                     <i className={buttonIcon}></i>
                     {buttonText}
-                </BalanceToggleButton>
+                </Button>
                 <Button 
                     className="btn btn-info"
                     onClick={props.handleRefresh}>
                     <i className="fas fa-redo"></i> Refresh Price
                 </Button>
             </Section>
-            <Section> </Section>
         </>
     );
 };
