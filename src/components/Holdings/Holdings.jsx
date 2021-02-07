@@ -1,8 +1,8 @@
 import React from 'react';
 import propTypes from 'prop-types';
 import styled from 'styled-components';
-import {formatter} from "../functions";
-import {Button} from '../styledButtons';
+import { formatter } from '../functions';
+import { Button } from '../styledButtons';
 
 export const Section = styled.section`
     margin: 0.5rem 0 2rem 2.5rem;    
@@ -19,7 +19,7 @@ const Balance = styled.div`
     text-align: left;
 `;
 
-export default function AccountBalance(props) {
+export default function Holdings(props) {
 
     const buttonClass = 'btn ' + (props.showBalance ? 'btn-warning' : 'btn-info');
     const buttonText = props.showBalance ? ' Hide Balance' : ' Show Balance';
@@ -31,6 +31,7 @@ export default function AccountBalance(props) {
     
     return (
         <>
+            <h1>Holdings</h1>
             <Balance>{content}</Balance>
             <Section>
                 <Button 
@@ -44,16 +45,16 @@ export default function AccountBalance(props) {
                     <i className={buttonIcon}></i>
                     {buttonText}
                 </Button>
-                <Button 
+                {/* <Button 
                     className="btn btn-info"
                     onClick={props.handleRefresh}>
                     <i className="fas fa-redo"></i> Refresh Data
-                </Button>
+                </Button> */}
             </Section>
         </>
     );
 };
 
-AccountBalance.propTypes = {
+Holdings.propTypes = {
     amount: propTypes.number.isRequired
 };

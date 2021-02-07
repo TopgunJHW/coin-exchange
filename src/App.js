@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTickerInfo, findObject } from './components/functions'
+import { fetchGlobalInfo, fetchTickerInfo, findObject } from './components/functions'
 import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
 import NavBar from './components/NavBar/NavBar';
-import AccountBalance from './components/AccountBalance/AccountBalance';
-import CoinList from './components/CoinList/CoinList';
+import Home from './components/CoinList/CoinList'
+import Holdings from './components/Holdings/Holdings';
 import styled from 'styled-components';
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,16 +17,18 @@ const Div = styled.div`
 `;
 
 const helicopterAmount = 10000;
+const globalUrl = 'https://api.coinpaprika.com/v1/global';
 const tickersUrl = 'https://api.coinpaprika.com/v1/tickers/';
 
 function App() {
   // This is use-state hooks
   const [balance, setBalance] = useState(10000);
   const [showBalance, setShowBalance] = useState(false);
+  const [globalData, setGlobalData] = useState({});
   const [coinData, setCoinData] = useState([]);
-  const [coinCount, setCoinCount] = useState(10)
-  const [startCoinCount, setStartCoinCount] = useState(0)
-  const [coinHoldings, setCoinHoldings] = useState([])
+  const [coinCount, setCoinCount] = useState(10);
+  const [startCoinCount, setStartCoinCount] = useState(0);
+  const [coinHoldings, setCoinHoldings] = useState([]);
 
   async function fetchCreateCoinData (count, startCount) {
     const fetchedCoinData = await fetchTickerInfo(count, startCount, tickersUrl);
@@ -43,30 +45,49 @@ function App() {
     return newCoinData
   }
 
-  const componentDidMount = async() => {
-    setCoinData(await fetchCreateCoinData(coinCount, startCoinCount));
+  async function fetchCreateGlobalData () {
+    const fetchedData = await fetchGlobalInfo(globalUrl);
+
+    return {
+      marketCap: fetchedData.market_cap_usd,
+      dailyVol: fetchedData.volume_24h_usd,
+      domBTC: fetchedData.bitcoin_dominance_percentage
+    }
+  }
+
+  const refreshData = async(count, startCount) => {
+    console.log("RefreshData")
+    const responseCoinData = await fetchCreateCoinData(count, startCount);
+    const responseGlobalData = await fetchCreateGlobalData();
+    setCoinData(responseCoinData);
+    setGlobalData(responseGlobalData);
   };
 
   useEffect(function () {
+    
     if (coinData.length === 0) {
+      console.log('UseEffect')
       // In componentDidMount situation
-      componentDidMount();
+      refreshData(coinCount, startCoinCount);
     } else {
       // In componentDidUpdate situation
     }
   })
 
-  const handleRefresh = async() => {
-    setCoinData(await fetchCreateCoinData(coinCount, startCoinCount));
+  const handleRefresh = () => {
+    console.log('handleRefresh')
+    refreshData(coinCount, startCoinCount);
   }
 
-  const handleCoinCount = async(count) => {
-    setCoinData(await fetchCreateCoinData(count, startCoinCount));
+  const handleCoinCount = (count) => {
+    console.log('handleCoinCount')
+    refreshData(count, startCoinCount);
     setCoinCount(count);
   };
 
-  const handleStartCoinCount = async(startCount) => {
-    setCoinData(await fetchCreateCoinData(coinCount, startCount));
+  const handleStartCoinCount = (startCount) => {
+    console.log('handleCoinCount')
+    refreshData(coinCount, startCount);
     setStartCoinCount(startCount);
   }
 
@@ -102,13 +123,8 @@ function App() {
     <Div>
       <ExchangeHeader />
       <NavBar />
-      <AccountBalance 
-        amount={balance} 
-        showBalance={showBalance} 
-        handleBalanceVisibility={handleBalanceVisibility}
-        handleHelicopterMoney={handleHelicopterMoney}
-        handleRefresh={handleRefresh}/>
-      <CoinList 
+      <Home 
+        globalData={globalData}
         coinData={coinData}
         coinHoldings={coinHoldings}
         coinCount={coinCount}
@@ -116,7 +132,13 @@ function App() {
         handleTransaction={handleTransaction}
         handleCoinCount={handleCoinCount}
         handleStartCoinCount={handleStartCoinCount}
+        handleRefresh={handleRefresh}
         showBalance={showBalance}/>
+      <Holdings 
+        amount={balance} 
+        showBalance={showBalance} 
+        handleBalanceVisibility={handleBalanceVisibility}
+        handleHelicopterMoney={handleHelicopterMoney}/>
     </Div>
   );
 }

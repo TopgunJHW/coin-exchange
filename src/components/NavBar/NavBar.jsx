@@ -9,14 +9,14 @@ export default function NavBar(props) {
             </button> */}
             <div className="collapse navbar-collapse" id="navbarColor02">
                 <ul className="navbar-nav mr-auto">
-                    {/* <li className="nav-item active">
-                        <a className="nav-link" href="#">Home
+                    <li className="nav-item active">
+                        <a className="nav-link" href="#HomeHref">Home
                         <span className="sr-only">(current)</span>
                         </a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">Holding</a>
-                    </li> */}
+                        <a className="nav-link" href="#HoldingHref">Holding</a>
+                    </li>
                 </ul>
             </div>
         </nav>
