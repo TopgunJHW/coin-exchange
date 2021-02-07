@@ -49,7 +49,7 @@ export default function Coin(props) {
 
     return (
         <tr>
-            <Td>{props.rank + 1}</Td>
+            <Td>{props.rank}</Td>
             <TdName>{props.name}</TdName>
             <TdTicker>{props.ticker}</TdTicker>
             <TdCurrency>{formatterMarketCap.format(props.marketCap)}</TdCurrency>

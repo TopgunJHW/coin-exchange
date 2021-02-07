@@ -47,7 +47,7 @@ export default function AccountBalance(props) {
                 <Button 
                     className="btn btn-info"
                     onClick={props.handleRefresh}>
-                    <i className="fas fa-redo"></i> Refresh Price
+                    <i className="fas fa-redo"></i> Refresh Data
                 </Button>
             </Section>
         </>

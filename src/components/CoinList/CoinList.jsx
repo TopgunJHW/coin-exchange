@@ -33,8 +33,20 @@ export default function CoinList(props) {
   const handleCoinCount = (event) => {
     // Prevent the default action of submitting the form
     event.preventDefault();
-    props.handleCoinCount(event.target.value);
-};
+    props.handleCoinCount(parseInt(event.target.value));
+  };
+
+  const handleStartCoinCount = (event) => {
+    event.preventDefault();
+    const multiplier = parseInt(event.target.value);
+    let startCount = props.startCoinCount + props.coinCount * multiplier;
+
+    if (startCount < 0){
+      startCount = 0;
+    }
+
+    props.handleStartCoinCount(startCount)
+  }
   return (
     <>
     <Table className='table table-hover'>
@@ -53,7 +65,7 @@ export default function CoinList(props) {
       <tbody>
           {
             // key values is needed for optimally rendering in react. 
-            props.coinData.map( function({key, name, ticker, price, marketCap}, index) {
+            props.coinData.map( function({key, name, ticker, price, marketCap, rank}) {
               const holding = findObject(props.coinHoldings, 'key', key);
               return <Coin 
                         key={key}
@@ -65,19 +77,19 @@ export default function CoinList(props) {
                         marketCap={marketCap}
                         showBalance={props.showBalance}
                         tickerID={key}
-                        rank={index} />
+                        rank={rank} />
             })
           }
       </tbody>
     </Table>
     <Section>
-      <Button className="btn btn-outline-info">&#10094;Previous</Button>
+      <Button className="btn btn-outline-info" onClick={handleStartCoinCount} value={-1}>&#10094;Previous</Button>
       <Select className="form-control" onChange={handleCoinCount}>
         <option value="10">10</option>
         <option value="50">50</option>
         <option value="100">100</option>
       </Select>
-      <Button className="btn btn-outline-info">Next&#10095;</Button>
+      <Button className="btn btn-outline-info" onClick={handleStartCoinCount} value={1}>Next&#10095;</Button>
     </Section>
     </>
   );

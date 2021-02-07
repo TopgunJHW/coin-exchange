@@ -41,8 +41,8 @@ export function findObjectIndex (array, key, findValue) {
     return array.findIndex(object => object[key] === findValue)
 }
 
-export async function fetchTickerInfo (count, tickersUrl){
+export async function fetchTickerInfo (count, startCount, tickersUrl){
     const response = await axios.get(tickersUrl);
     const sortedResponse = SortArrayOfObjects(response.data);
-    return sortedResponse.slice(0, count);
+    return sortedResponse.slice(startCount, startCount + count);
 }
