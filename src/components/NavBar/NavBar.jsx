@@ -1,25 +1,26 @@
 import React from 'react';
+import styled from 'styled-components';
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
+
+const Navbar1 = styled(Navbar)`
+    background-color: white;
+    border-top: 1px solid grey;
+    border-bottom: 1px solid grey;
+    height: 3rem;
+`;
 
 export default function NavBar(props) {
+
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark"> 
-            {/* <a className="navbar-brand" href="#">Navbar</a>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-            </button> */}
-            <div className="collapse navbar-collapse" id="navbarColor02">
-                <ul className="navbar-nav mr-auto">
-                    <li className="nav-item active">
-                        <a className="nav-link" href="#HomeHref">Home
-                        <span className="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#HoldingHref">Holding</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        <Navbar1 bg="" variant="light">
+            <Navbar.Brand href="#home">Home</Navbar.Brand>
+            <Nav className="mr-auto">
+                <Nav.Link href="#Market">Market</Nav.Link>
+                <Nav.Link href="#holdings">Holdings</Nav.Link>
+                <Nav.Link href="#graph">Graph</Nav.Link>
+            </Nav>
+        </Navbar1>
 
     );
 };

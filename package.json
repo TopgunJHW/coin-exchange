@@ -11,13 +11,13 @@
     "bootstrap": "^4.6.0",
     "bootswatch": "^4.6.0",
     "react": "^17.0.1",
+    "react-bootstrap": "^1.4.3",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
     "styled-components": "^5.2.1",
     "uuid": "^8.3.2",
     "web-vitals": "^0.2.4"
   },
-  
   "homepage": "https://wei-jianhao.github.io/coin-exchange",
   "scripts": {
     "start": "react-scripts start",

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchGlobalInfo, fetchTickerInfo, findObject } from './components/functions'
 import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
 import NavBar from './components/NavBar/NavBar';
-import Home from './components/CoinList/CoinList'
+import Market from './components/Market/Market'
 import Holdings from './components/Holdings/Holdings';
 import styled from 'styled-components';
 
@@ -13,6 +13,11 @@ import '@fortawesome/fontawesome-free/js/all';
 const Div = styled.div`
   text-align: center;
   background-color: #efefef;
+  color: black;
+`;
+
+const DivHolding = styled(Div)`
+  background-color: white;
   color: black;
 `;
 
@@ -123,7 +128,7 @@ function App() {
     <Div>
       <ExchangeHeader />
       <NavBar />
-      <Home 
+      <Market 
         globalData={globalData}
         coinData={coinData}
         coinHoldings={coinHoldings}
@@ -134,11 +139,13 @@ function App() {
         handleStartCoinCount={handleStartCoinCount}
         handleRefresh={handleRefresh}
         showBalance={showBalance}/>
-      <Holdings 
-        amount={balance} 
-        showBalance={showBalance} 
-        handleBalanceVisibility={handleBalanceVisibility}
-        handleHelicopterMoney={handleHelicopterMoney}/>
+      <DivHolding>
+        <Holdings 
+          amount={balance} 
+          showBalance={showBalance} 
+          handleBalanceVisibility={handleBalanceVisibility}
+          handleHelicopterMoney={handleHelicopterMoney}/>
+      </DivHolding>
     </Div>
   );
 }
