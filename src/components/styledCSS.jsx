@@ -9,3 +9,10 @@ export const ButtonTable = styled(Button)`
     width: 70px;
     margin: 0 2px 0 2px;
 `;
+
+export const H1 = styled.h1`
+  font-size: 3rem;
+  line-height: 8rem;
+  fold-weight: bold;
+  min-width: 300px;
+`;

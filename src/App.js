@@ -3,7 +3,8 @@ import { fetchGlobalInfo, fetchTickerInfo, findObject } from './components/funct
 import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
 import NavBar from './components/NavBar/NavBar';
 import Market from './components/Market/Market'
-import Holdings from './components/Holdings/Holdings';
+import Wallet from './components/Wallet/Wallet';
+import Graph from './components/Graph/Graph'
 import styled from 'styled-components';
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,11 +14,6 @@ import '@fortawesome/fontawesome-free/js/all';
 const Div = styled.div`
   text-align: center;
   background-color: #efefef;
-  color: black;
-`;
-
-const DivHolding = styled(Div)`
-  background-color: white;
   color: black;
 `;
 
@@ -33,7 +29,10 @@ function App() {
   const [coinData, setCoinData] = useState([]);
   const [coinCount, setCoinCount] = useState(10);
   const [startCoinCount, setStartCoinCount] = useState(0);
-  const [coinHoldings, setCoinHoldings] = useState([]);
+  const [coinHoldings, setCoinHoldings] = useState([
+          {key: 'btc-bitcoin', name:'Bitcoin', ticker:'BTC', balance: 0, priceUSD: null}, 
+          {key: 'eth-ethereum', name:'Ethereum', ticker:'ETH', balance: 0, priceUSD: null}]);
+  const [priceOfBTC, setPriceOfBTC] = useState(0);
 
   async function fetchCreateCoinData (count, startCount) {
     const fetchedCoinData = await fetchTickerInfo(count, startCount, tickersUrl);
@@ -65,7 +64,8 @@ function App() {
     const responseCoinData = await fetchCreateCoinData(count, startCount);
     const responseGlobalData = await fetchCreateGlobalData();
     setCoinData(responseCoinData);
-    setGlobalData(responseGlobalData);
+    setGlobalData(responseGlobalData); 
+    setPriceOfBTC(findObject(responseCoinData, 'key', 'btc-bitcoin').price);
   };
 
   useEffect(function () {
@@ -110,13 +110,19 @@ function App() {
     let holdings = [...coinHoldings]; // This is shallow copy of the values
 
     if (!findObject(coinHoldings, 'key', tickerKey)){
-      holdings = [...coinHoldings, {key: tickerKey, balance: 0}]
+      holdings = [...coinHoldings, {
+        key: tickerKey,
+        name: coinInfo.name,
+        ticker: coinInfo.ticker,
+        balance: 0,
+        priceUSD: null}]
     };
 
     let newHoldings = holdings.map(function(holding){
       let newHolding = {...holding}; // This is shallow copy of the values
       if(tickerKey === holding.key){
         newHolding.balance += balanceChange;
+        newHolding.priceUSD = coinInfo.price;
         setBalance(oldBalance => oldBalance - balanceChange * coinInfo.price);
       }
       return newHolding;
@@ -139,13 +145,14 @@ function App() {
         handleStartCoinCount={handleStartCoinCount}
         handleRefresh={handleRefresh}
         showBalance={showBalance}/>
-      <DivHolding>
-        <Holdings 
-          amount={balance} 
-          showBalance={showBalance} 
-          handleBalanceVisibility={handleBalanceVisibility}
-          handleHelicopterMoney={handleHelicopterMoney}/>
-      </DivHolding>
+      <Wallet 
+        amount={balance} 
+        coinHoldings={coinHoldings}
+        priceOfBTC={priceOfBTC}
+        showBalance={showBalance} 
+        handleBalanceVisibility={handleBalanceVisibility}
+        handleHelicopterMoney={handleHelicopterMoney}/>
+      <Graph></Graph>
     </Div>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import CoinList from './CoinList';
 import styled from 'styled-components';
-import { Button } from '../styledButtons';
+import { Button } from '../styledCSS';
 import { formatterMarketCap} from '../functions';
 
 const Section = styled.section`
@@ -13,7 +13,7 @@ const SectionHead = styled(Section)`
   margin: 50px 0 20px 0;
 `;
 
-const SectionFoot = styled(Section)`
+export const SectionFoot = styled(Section)`
   margin: 10px 0 50px 0;
 `;
 

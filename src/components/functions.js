@@ -14,7 +14,7 @@ export var formatterMarketCap = Intl.NumberFormat('en-US', {
 export var formatterCoin = Intl.NumberFormat('en-US', {
     style: 'decimal',
     // minimumSignificantDigits: 3,
-    // maximumSignificantDigits: 7
+    maximumSignificantDigits: 3
 });
 
 // const formatPrice = price => parseFloat(Number(price).toFixed(4));

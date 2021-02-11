@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import logo from './logo.svg';
+import { H1 } from '../styledCSS';
 
 const Header = styled.header`
   background-color: #FFFFFF;
@@ -18,13 +19,6 @@ const Header = styled.header`
 const Img = styled.img`
   height: 8rem;
   pointer-events: none;
-`;
-
-const H1 = styled.h1`
-  font-size: 3rem;
-  line-height: 8rem;
-  fold-weight: bold;
-  min-width: 300px;
 `;
 
 export default class ExchangeHeader extends Component {

@@ -5,7 +5,7 @@ import { findObject } from '../functions';
 
 const Table = styled.table`
   display: inline-block;
-  width: 80%;
+  width: 77%;
   font-size: 1rem;
   background-color: white;
   color: black;
@@ -26,8 +26,7 @@ export default function CoinList(props) {
           <th>Name</th>
           <th>Ticker</th>
           <th>Market Cap</th>
-          <th>Price
-          </th>
+          <th>Price</th>
           <th>Balance</th>
           <th>Actions</th>
         </tr>
